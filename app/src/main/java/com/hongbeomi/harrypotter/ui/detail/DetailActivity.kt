@@ -20,12 +20,18 @@ package com.hongbeomi.harrypotter.ui.detail
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
+import androidx.lifecycle.lifecycleScope
 import com.hongbeomi.harrypotter.R
 import com.hongbeomi.harrypotter.base.BaseActivity
 import com.hongbeomi.harrypotter.databinding.ActivityDetailBinding
 import com.hongbeomi.harrypotter.ui.HouseType
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -61,8 +67,25 @@ class DetailActivity : BaseActivity() {
             recyclerViewDetail.adapter = adapter
         }
 
-        viewModel.characterList.observe(this) {
-            adapter.submitList(it)
+        lifecycleScope.launch {
+            viewModel.apply {
+                userIntent.send(DetailIntent.FetchCharacters)
+                detailState.collect {
+                    when(it) {
+                        is DetailState.Fetch -> {
+                            adapter.submitList(it.characterList)
+                            binding.animationViewLoading.visibility = View.INVISIBLE
+                        }
+                        is DetailState.Loading -> binding.animationViewLoading.visibility = View.VISIBLE
+                        is DetailState.Error -> {
+                            Log.e("Detail", it.exception.toString())
+                            Toast.makeText(this@DetailActivity, R.string.toast_fail_fetch, Toast.LENGTH_SHORT).show()
+                            binding.animationViewLoading.visibility = View.INVISIBLE
+                        }
+                        is DetailState.Idle -> binding.animationViewLoading.visibility = View.VISIBLE
+                    }
+                }
+            }
         }
     }
 

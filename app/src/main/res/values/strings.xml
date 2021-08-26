@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">HarryPotter</string>
     <string name="transition_name">house</string>
+    <string name="toast_fail_fetch">오류가 발생했습니다.</string>
 </resources>

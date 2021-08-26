@@ -74,8 +74,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center"
-            android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.INVISIBLE}"
             android:scaleType="centerCrop"
+            android:visibility="invisible"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/wingardium_leviosa"/>
